@@ -629,6 +629,9 @@ function renderLeftRail(){
   const m2=D.fred.find(f=>f.id==='M2SL');
   const mort=D.fred.find(f=>f.id==='MORTGAGE30US');
   const claims=D.fred.find(f=>f.id==='ICSA');
+  const semiconProd=D.fred.find(f=>f.id==='IPN2131N');
+  const tcu=D.fred.find(f=>f.id==='TCU');
+  const semiconEmp=D.fred.find(f=>f.id==='CES3000000008');
 
   document.getElementById('leftRail').innerHTML=`
     <div class="g-panel">
@@ -649,6 +652,9 @@ function renderLeftRail(){
       <div class="econ-row"><span class="elabel">${t('metrics.mortgage30y','30Y Mortgage')}</span><span class="eval">${mort?.value||'--'}%</span></div>
       <div class="econ-row"><span class="elabel">${t('metrics.m2Supply','M2 Supply')}</span><span class="eval">$${(m2?.value/1000)?.toFixed(1)||'--'}T</span></div>
       <div class="econ-row"><span class="elabel">${t('metrics.natDebt','Nat. Debt')}</span><span class="eval">$${(parseFloat(D.treasury.totalDebt)/1e12).toFixed(2)}T</span></div>
+      <div class="econ-row"><span class="elabel" style="color:var(--accent2)">Semicon. Production</span><span class="eval">${semiconProd?.value?.toFixed(1)||'--'}</span></div>
+      <div class="econ-row"><span class="elabel" style="color:var(--accent2)">Cap. Utilization</span><span class="eval">${tcu?.value?.toFixed(1)||'--'}%</span></div>
+      <div class="econ-row"><span class="elabel" style="color:var(--accent2)">Semicon. Employ.</span><span class="eval">${semiconEmp?.value?.toLocaleString()||'--'}K</span></div>
     </div>
     <div class="g-panel">
       <div class="sec-head"><h3>${t('panels.spaceWatch','Space Watch')}</h3><span class="badge">${t('badges.orbital','CELESTRAK')}</span></div>
@@ -1763,13 +1769,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const hasInlineData = !!(D && D.meta);
   const canProbeApi = location.protocol !== 'file:';
 
-  if (canProbeApi && !hasInlineData) {
+  if (canProbeApi) {
     // Server mode: always fetch live data from API (ignore any stale inline D)
     fetch('/api/data')
       .then(r => r.json())
       .then(data => { D = data; init(); connectSSE(); })
       .catch(() => {
-        // Should not reach here — server routes to loading.html when no data
+        // Fall back to inline data if available
         if (D && D.meta) { init(); connectSSE(); }
       });
   } else if (hasInlineData) {

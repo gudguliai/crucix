@@ -33,6 +33,10 @@ const KEY_SERIES = {
   // Commodities via FRED
   DCOILWTICO: 'WTI Crude Oil',
   GOLDAMGBD228NLBM: 'Gold Price (London Fix)',
+  // Semiconductor & Manufacturing
+  IPN2131N: 'Semiconductor Production (IP)',
+  TCU: 'Total Capacity Utilization',
+  CES3000000008: 'Semiconductor Employment',
   // Housing
   MORTGAGE30US: '30-Year Mortgage Rate',
   // Global
@@ -86,6 +90,9 @@ export async function briefing(apiKey) {
   const yieldCurve10y3m = get('T10Y3M');
   const vix = get('VIXCLS');
   const hySpread = get('BAMLH0A0HYM2');
+  const semiconProd = get('IPN2131N');
+  const tcu = get('TCU');
+  const semiconEmp = get('CES3000000008');
 
   const signals = [];
   if (yieldCurve10y2y !== null && yieldCurve10y2y < 0) signals.push('YIELD CURVE INVERTED (10Y-2Y) — recession signal');
@@ -93,6 +100,9 @@ export async function briefing(apiKey) {
   if (vix !== null && vix > 30) signals.push(`VIX ELEVATED at ${vix} — high fear/volatility`);
   if (vix !== null && vix > 40) signals.push(`VIX EXTREME at ${vix} — crisis-level fear`);
   if (hySpread !== null && hySpread > 5) signals.push(`HIGH YIELD SPREAD WIDE at ${hySpread}% — credit stress`);
+  if (semiconProd !== null && semiconProd < 80) signals.push(`SEMICONDUCTOR PRODUCTION DECLINING at ${semiconProd} — supply contraction risk`);
+  if (tcu !== null && tcu < 75) signals.push(`CAPACITY UTILIZATION LOW at ${tcu}% — manufacturing slack`);
+  if (semiconEmp !== null && semiconEmp < 250) signals.push(`SEMICONDUCTOR EMPLOYMENT SHRINKING — sector headcount declining`);
 
   return {
     source: 'FRED',

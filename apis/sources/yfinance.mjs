@@ -13,6 +13,7 @@ const SYMBOLS = {
   '^IXIC': 'Nasdaq Composite',
   '^DJI': 'Dow Jones',
   '^RUT': 'Russell 2000',
+  '^SOX': 'PHLX Semiconductor',
   // Rates / Credit
   TLT: '20Y+ Treasury',
   HYG: 'High Yield Corp',
