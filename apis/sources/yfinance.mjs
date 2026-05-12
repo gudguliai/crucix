@@ -8,12 +8,23 @@ const BASE = 'https://query1.finance.yahoo.com/v8/finance/chart';
 
 // Symbols to track — covers broad market, rates, commodities, crypto, volatility
 const SYMBOLS = {
-  // Indexes / ETFs
+  // Indexes / ETFs — US
   '^GSPC': 'S&P 500',
   '^IXIC': 'Nasdaq Composite',
   '^DJI': 'Dow Jones',
   '^RUT': 'Russell 2000',
   '^SOX': 'PHLX Semiconductor',
+  // Indexes — Global
+  '^FTSE': 'FTSE 100 (UK)',
+  '^GDAXI': 'DAX (Germany)',
+  '^FCHI': 'CAC 40 (France)',
+  '^STOXX50E': 'Euro Stoxx 50',
+  '^N225': 'Nikkei 225 (Japan)',
+  '^HSI': 'Hang Seng (HK)',
+  '000001.SS': 'Shanghai Composite',
+  '^BSESN': 'BSE Sensex (India)',
+  '^AXJO': 'ASX 200 (Australia)',
+  '^KS11': 'KOSPI (S. Korea)',
   // Rates / Credit
   TLT: '20Y+ Treasury',
   HYG: 'High Yield Corp',
@@ -119,6 +130,7 @@ export async function collect() {
       timestamp: new Date().toISOString(),
     },
     indexes: pickGroup(quotes, ['^GSPC', '^IXIC', '^DJI', '^RUT']),
+    global: pickGroup(quotes, ['^FTSE', '^GDAXI', '^FCHI', '^STOXX50E', '^N225', '^HSI', '000001.SS', '^BSESN', '^AXJO', '^KS11']),
     rates: pickGroup(quotes, ['TLT', 'HYG', 'LQD']),
     commodities: pickGroup(quotes, ['GC=F', 'SI=F', 'CL=F', 'BZ=F', 'NG=F']),
     crypto: pickGroup(quotes, ['BTC-USD', 'ETH-USD']),

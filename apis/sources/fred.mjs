@@ -39,6 +39,18 @@ const KEY_SERIES = {
   CES3000000008: 'Semiconductor Employment',
   // Housing
   MORTGAGE30US: '30-Year Mortgage Rate',
+  // Regional housing — California
+  CASTHPI: 'CA House Price Index (All-Transactions)',
+  ACTLISCOUCA: 'CA Active Listings',
+  MEDLISPRICA: 'CA Median Listing Price',
+  // Regional housing — Florida
+  FLSTHPI: 'FL House Price Index (All-Transactions)',
+  ACTLISCOUFL: 'FL Active Listings',
+  MEDLISPRIFL: 'FL Median Listing Price',
+  // Regional housing — Nevada (Las Vegas metro)
+  NVSTHPI: 'NV House Price Index (All-Transactions)',
+  ACTLISCOUNV: 'NV Active Listings',
+  MEDLISPRI29820: 'Las Vegas Median Listing Price',
   // Global
   DTWEXBGS: 'USD Trade Weighted Index',
 };
@@ -51,7 +63,7 @@ async function getSeriesLatest(seriesId, apiKey) {
     file_type: 'json',
     sort_order: 'desc',
     limit: '5',
-    observation_start: daysAgo(90),
+    observation_start: daysAgo(365),
   });
   return safeFetch(`${BASE}/series/observations?${params}`);
 }
@@ -86,6 +98,14 @@ export async function briefing(apiKey) {
 
   // Compute derived signals
   const get = (id) => results.find(r => r.id === id)?.value;
+  const getRecent = (id) => results.find(r => r.id === id)?.recent || [];
+  const trend = (id) => {
+    const vals = getRecent(id);  // newest first (desc)
+    if (vals.length < 2) return { change: null, changePct: null, direction: 'flat' };
+    const chg = vals[0] - vals[1];
+    const pct = vals[1] !== 0 ? (chg / vals[1]) * 100 : 0;
+    return { change: chg, changePct: pct, direction: chg > 0 ? 'up' : chg < 0 ? 'down' : 'flat' };
+  };
   const yieldCurve10y2y = get('T10Y2Y');
   const yieldCurve10y3m = get('T10Y3M');
   const vix = get('VIXCLS');
@@ -104,11 +124,40 @@ export async function briefing(apiKey) {
   if (tcu !== null && tcu < 75) signals.push(`CAPACITY UTILIZATION LOW at ${tcu}% — manufacturing slack`);
   if (semiconEmp !== null && semiconEmp < 250) signals.push(`SEMICONDUCTOR EMPLOYMENT SHRINKING — sector headcount declining`);
 
+  // Build regional housing section with trends
+  const housing = {
+    california: {
+      hpi: get('CASTHPI'),
+      hpiTrend: trend('CASTHPI'),
+      activeListings: get('ACTLISCOUCA'),
+      listingsTrend: trend('ACTLISCOUCA'),
+      medianPrice: get('MEDLISPRICA'),
+      priceTrend: trend('MEDLISPRICA'),
+    },
+    florida: {
+      hpi: get('FLSTHPI'),
+      hpiTrend: trend('FLSTHPI'),
+      activeListings: get('ACTLISCOUFL'),
+      listingsTrend: trend('ACTLISCOUFL'),
+      medianPrice: get('MEDLISPRIFL'),
+      priceTrend: trend('MEDLISPRIFL'),
+    },
+    vegas: {
+      hpi: get('NVSTHPI'),
+      hpiTrend: trend('NVSTHPI'),
+      activeListings: get('ACTLISCOUNV'),
+      listingsTrend: trend('ACTLISCOUNV'),
+      medianPrice: get('MEDLISPRI29820'),
+      priceTrend: trend('MEDLISPRI29820'),
+    },
+  };
+
   return {
     source: 'FRED',
     timestamp: new Date().toISOString(),
     indicators: results.filter(r => r.value !== null),
     signals,
+    housing,
   };
 }
 

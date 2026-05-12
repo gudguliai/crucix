@@ -440,6 +440,33 @@ export async function synthesize(data) {
     recent: f.recent || [],
     momChange: f.momChange, momChangePct: f.momChangePct
   }));
+  const housingRaw = data.sources.FRED?.housing || {};
+  const housing = {
+    california: {
+      hpi: housingRaw.california?.hpi ?? null,
+      hpiTrend: housingRaw.california?.hpiTrend ?? null,
+      activeListings: housingRaw.california?.activeListings ?? null,
+      listingsTrend: housingRaw.california?.listingsTrend ?? null,
+      medianPrice: housingRaw.california?.medianPrice ?? null,
+      priceTrend: housingRaw.california?.priceTrend ?? null,
+    },
+    florida: {
+      hpi: housingRaw.florida?.hpi ?? null,
+      hpiTrend: housingRaw.florida?.hpiTrend ?? null,
+      activeListings: housingRaw.florida?.activeListings ?? null,
+      listingsTrend: housingRaw.florida?.listingsTrend ?? null,
+      medianPrice: housingRaw.florida?.medianPrice ?? null,
+      priceTrend: housingRaw.florida?.priceTrend ?? null,
+    },
+    vegas: {
+      hpi: housingRaw.vegas?.hpi ?? null,
+      hpiTrend: housingRaw.vegas?.hpiTrend ?? null,
+      activeListings: housingRaw.vegas?.activeListings ?? null,
+      listingsTrend: housingRaw.vegas?.listingsTrend ?? null,
+      medianPrice: housingRaw.vegas?.medianPrice ?? null,
+      priceTrend: housingRaw.vegas?.priceTrend ?? null,
+    },
+  };
   const energyData = data.sources.EIA || {};
   const oilPrices = energyData.oilPrices || {};
   const wtiRecent = (oilPrices.wti?.recent || []).map(d => d.value);
@@ -551,6 +578,10 @@ export async function synthesize(data) {
       symbol: q.symbol, name: q.name, price: q.price,
       change: q.change, changePct: q.changePct, history: q.history || []
     })),
+    global: (yfData.global || []).map(q => ({
+      symbol: q.symbol, name: q.name, price: q.price,
+      change: q.change, changePct: q.changePct
+    })),
     rates: (yfData.rates || []).map(q => ({
       symbol: q.symbol, name: q.name, price: q.price,
       change: q.change, changePct: q.changePct
@@ -608,7 +639,7 @@ export async function synthesize(data) {
     },
     sdr: { total: sdrNet.totalReceivers || 0, online: sdrNet.online || 0, zones: sdrZones },
     tg: { posts: tgData.totalPosts || 0, urgent: tgUrgent, topPosts: tgTop },
-    who, fred, energy, metals, bls, treasury, gscpi, defense, noaa, epa, acled, gdelt, space, health, news,
+    who, fred, housing, energy, metals, bls, treasury, gscpi, defense, noaa, epa, acled, gdelt, space, health, news,
     markets, // Live Yahoo Finance market data
     ideas: [], ideasSource: 'disabled',
     // newsFeed for ticker (merged RSS + GDELT + Telegram)
