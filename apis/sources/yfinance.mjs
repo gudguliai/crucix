@@ -29,12 +29,19 @@ const SYMBOLS = {
   TLT: '20Y+ Treasury',
   HYG: 'High Yield Corp',
   LQD: 'IG Corporate',
-  // Commodities
+  // Commodities — Metals & Energy
   'GC=F': 'Gold',
   'SI=F': 'Silver',
   'CL=F': 'WTI Crude',
   'BZ=F': 'Brent Crude',
   'NG=F': 'Natural Gas',
+  // Commodities — Softs & Agriculture
+  'KC=F': 'Coffee',
+  'CC=F': 'Cocoa',
+  'SB=F': 'Sugar',
+  'ZC=F': 'Corn',
+  'ZW=F': 'Wheat',
+  'LBS=F': 'Lumber',
   // Crypto
   'BTC-USD': 'Bitcoin',
   'ETH-USD': 'Ethereum',
@@ -133,6 +140,7 @@ export async function collect() {
     global: pickGroup(quotes, ['^FTSE', '^GDAXI', '^FCHI', '^STOXX50E', '^N225', '^HSI', '000001.SS', '^BSESN', '^AXJO', '^KS11']),
     rates: pickGroup(quotes, ['TLT', 'HYG', 'LQD']),
     commodities: pickGroup(quotes, ['GC=F', 'SI=F', 'CL=F', 'BZ=F', 'NG=F']),
+    softs: pickGroup(quotes, ['KC=F', 'CC=F', 'SB=F', 'ZC=F', 'ZW=F', 'LBS=F']),
     crypto: pickGroup(quotes, ['BTC-USD', 'ETH-USD']),
     volatility: pickGroup(quotes, ['^VIX']),
   };

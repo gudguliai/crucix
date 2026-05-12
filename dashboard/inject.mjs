@@ -590,6 +590,10 @@ export async function synthesize(data) {
       symbol: q.symbol, name: q.name, price: q.price,
       change: q.change, changePct: q.changePct, history: q.history || []
     })),
+    softs: (yfData.softs || []).map(q => ({
+      symbol: q.symbol, name: q.name, price: q.price,
+      change: q.change, changePct: q.changePct
+    })),
     crypto: (yfData.crypto || []).map(q => ({
       symbol: q.symbol, name: q.name, price: q.price,
       change: q.change, changePct: q.changePct
